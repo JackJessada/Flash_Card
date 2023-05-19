@@ -26,14 +26,133 @@ def load_frame1():
         cursor="hand2",
         command=lambda: print("deck_button_has_click"),
         relief="flat"
-    )
-    deck_button.place(
+    ).place(
         x=516.0,
         y=60.0,
         width=189.0,
         height=90.0
     )
-   
+
+    frame1.add_photo = tk.PhotoImage(file = r"assets\frame1\button_3.png")
+    add_button = tk.Button(
+        frame1,
+        image = frame1.add_photo,
+        borderwidth=0,
+        highlightthickness=0,
+        cursor="hand2",
+        command=lambda: print("add_button_has_click"),
+        relief="flat"
+    ).place(
+        x=735.0,
+        y=60.0,
+        width=189.0,
+        height=90.0
+    )
+
+    frame1.agian_photo = tk.PhotoImage(file=r"assets\frame1\button_5.png")
+    agian_button = tk.Button(
+        frame1,
+        image = frame1.agian_photo,
+        borderwidth=0,
+        highlightthickness=0,
+        cursor="hand2",
+        command=lambda: print("again_button_has_click"),
+        relief="flat"
+    ).place(
+        x=405.0,
+        y=921.0,
+        width=126.0,
+        height=43.0
+    )
+
+    frame1.hard_photo = tk.PhotoImage(file=r"assets\frame1\button_6.png")
+    hard_button = tk.Button(
+        frame1,
+        image = frame1.hard_photo,
+        borderwidth=0,
+        highlightthickness=0,
+        cursor="hand2",
+        command=lambda: print("hard_button_has_click"),
+        relief="flat"
+    ).place(
+        x=531.0,
+        y=921.0,
+        width=126.0,
+        height=43.0
+    )
+
+    frame1.medium_photo = tk.PhotoImage(file=r"assets\frame1\button_4.png")
+    medium_button = tk.Button(
+        frame1,
+        image = frame1.medium_photo,
+        borderwidth=0,
+        highlightthickness=0,
+        cursor="hand2",
+        command=lambda: print("medium_button_has_click"),
+        relief="flat"
+    ).place(
+        x=657.0,
+        y=921.0,
+        width=126.0,
+        height=43.0
+    )
+
+    frame1.easy_photo = tk.PhotoImage(file=r"assets\frame1\button_7.png")
+    easy_button = tk.Button(
+        frame1,
+        image = frame1.easy_photo,
+        borderwidth=0,
+        highlightthickness=0,
+        cursor="hand2",
+        command=lambda: print("easy_button_has_click"),
+        relief="flat"
+    ).place(
+        x=783.0,
+        y=921.0,
+        width=126.0,
+        height=43.0
+    )
+
+    frame1.remember_photo = tk.PhotoImage(file=r"assets\frame1\button_8.png")
+    remember_button = tk.Button(
+        frame1,
+        image = frame1.remember_photo,
+        borderwidth=0,
+        highlightthickness=0,
+        cursor="hand2",
+        command=lambda: print("remember_button_has_click"),
+        relief="flat"
+    ).place(
+        x=909.0,
+        y=921.0,
+        width=126.0,
+        height=43.0
+    )
+
+    frame1.reveal_photo = tk.PhotoImage(file=r"assets\frame1\button_1.png")
+    reveal_button = tk.Button(
+        frame1,
+        image = frame1.reveal_photo,
+        borderwidth=0,
+        highlightthickness=0,
+        cursor="hand2",
+        command=lambda: print("reveal_button_has_click"),
+        relief="flat",
+        bg = bg_color
+    ).place(
+        x=735.0,
+        y=221.0,
+        width=630.0,
+        height=630.0
+    )
+
+    frame1.questtion_photo = tk.PhotoImage(file=r"assets\frame1\image_1.png")
+    tk.Label(frame1, image=frame1.questtion_photo,bg = bg_color).place(
+        x=75.0,
+        y=221.0,
+        width=630.0,
+        height=630.0,
+    )
 
 
 for frame in (frame1,frame0):
