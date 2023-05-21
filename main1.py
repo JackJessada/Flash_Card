@@ -26,6 +26,122 @@ def clear_widget(frame):
     for widget in frame.winfo_children():
         widget.destroy()
 
+def add_fuction():
+    popup = tk.Toplevel(
+            frame0,
+            bg = bg_color,
+            height = 768,
+            width=1080,
+            relief = "ridge"
+            )
+    
+    popup.title("Add Flashcard")
+    popup.resizable(False, False)
+    frame0.font_popup_photo = tk.PhotoImage(file = r"assets\frame0\font.png")
+    tk.Label(
+        popup,
+        bd = 0,
+        relief="flat",
+        image=frame0.font_popup_photo,
+        activeforeground = bg_color,
+        activebackground = bg_color,
+        background=bg_color,
+    ).place(
+        x = 61.5,
+        y = 165.75
+    )
+    frame0.back_popup_photo = tk.PhotoImage(file = r"assets\frame0\back.png")
+    tk.Label(
+        popup,
+        bd = 0,
+        relief="flat",
+        image=frame0.back_popup_photo,
+        activeforeground = bg_color,
+        activebackground = bg_color,
+        background=bg_color,
+    ).place(
+        x = 556.5,
+        y = 165.75
+    )
+    frame0.choose_deck_popup_photo = tk.PhotoImage(file = r"assets\frame0\choose_deck.png")
+    choose_deck_button = tk.Button(
+        popup,
+        command=lambda :print("chose deck button"),#get_input(),
+        image=frame0.choose_deck_popup_photo,
+        borderwidth=0,
+        highlightthickness=0,
+        cursor="hand2",
+        relief="flat",
+        background=bg_color,
+        activeforeground = bg_color,
+        activebackground = bg_color,
+        ).place(
+            x=385.0,
+            y=47.0,
+            width=297.0,
+            height=67.5
+        )
+    font_entry = tk.Text(
+        popup,
+        bd = 0,
+        cursor = "hand2",
+        font = ("Lekton-Bold",32),
+        fg = "#737B59",
+        relief="flat",
+        bg="#CCD5AE",
+        wrap="word"
+        )
+    font_entry.place(
+        x=105.0,
+        y=250.0,
+        width=385.0,
+        height=351.0
+        )
+    back_entry = tk.Text(
+        popup,
+        bd = 0,
+        cursor = "hand2",
+        font = ("Lekton-Bold",32),
+        fg = "#7A5E43",
+        relief="flat",
+        bg="#D4A373",
+        wrap="word"
+        )
+    back_entry.place(
+        x=608.0,
+        y=250.0,
+        width=385.0,
+        height=351.0
+        )
+    frame0.small_add_button_photo = tk.PhotoImage(file = r"assets\frame0\small_add.png")
+    submit_button = tk.Button(
+        popup,
+        command=lambda : print("eiei"),#get_input(),
+        image=frame0.small_add_button_photo,
+        borderwidth=0,
+        highlightthickness=0,
+        cursor="hand2",
+        relief="flat",
+        background=bg_color,
+        activeforeground = bg_color,
+        activebackground = bg_color,
+        )
+    submit_button.place(
+            x=490.0,
+            y=680.0,
+            width=116.0,
+            height=55.0
+        )
+    # selected_items = name_listbox.curselection()
+    # for index in selected_items:
+    #     item = name_listbox.get(index)
+    #     split1 = item.split()
+    #     old_name = split1[0]
+    # def get_input():
+    #     font_input = font_entry.get()
+    #     back_input = back_entry.get()
+    #     print(font_input)
+    #     print(back_input)
 
 def load_frame1(before_frame):
     clear_widget(before_frame)
@@ -55,7 +171,7 @@ def load_frame1(before_frame):
         borderwidth=0,
         highlightthickness=0,
         cursor="hand2",
-        command=lambda: print("add_button_has_click"),
+        command=lambda: add_fuction(),
         relief="flat"
     ).place(
         x=735.0,
@@ -198,7 +314,7 @@ def load_frame0(before_frame):
         borderwidth=0,
         highlightthickness=0,
         cursor="hand2",
-        command=lambda: print("add_button_has_click"),
+        command=lambda: add_fuction(),
         relief="flat"
     ).place(
         x=735.0,
@@ -316,7 +432,7 @@ def load_frame0(before_frame):
             relief = "ridge"
             )
         popup.title("Rename")
-        #popup.resizable(False, False)
+        popup.resizable(False, False)
         # Create an Entry widget in the pop-up window
         frame0.rename_popup_photo = tk.PhotoImage(file = r"assets\frame0\entry_1.png")
         tk.Label(
@@ -386,7 +502,7 @@ def load_frame0(before_frame):
             user_input = entry.get()
             converted_input = user_input.replace(" ", "_")
             if converted_input[0].isdigit():
-                dm.rename_table(old_name,"not_start_by_number")
+                dm.rename_table(old_name,"start_with_chr")
             else:
                 dm.rename_table(old_name,converted_input[:18])
             load_frame0(frame0)

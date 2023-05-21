@@ -86,3 +86,4 @@ def delete_flashcard_table(deck_name):
     c.execute(f'''DROP TABLE IF EXISTS {deck_name}''')
     conn.commit()
     conn.close()
+
