@@ -20,10 +20,43 @@ pyglet.font.add_file(r"fonts\Lekton-Regular.ttf")
 frame0 = tk.Frame(root,width=1440,height=1024,bg=bg_color)
 frame1 = tk.Frame(root,width=1440,height=1024,bg=bg_color)
 get_deck_name = tk.StringVar()
-
+def reset_stingsVar(stringvar):
+    stringvar.set("")
 def clear_widget(frame):
     for widget in frame.winfo_children():
         widget.destroy()
+def load_deck_button(frame):
+    frame.deck_photo = tk.PhotoImage(file = r"assets\frame0\button_1.png")
+    deck_button = tk.Button(
+        frame,
+        image = frame.deck_photo,
+        borderwidth=0,
+        highlightthickness=0,
+        cursor="hand2",
+        command=lambda: load_frame0(frame0),
+        relief="flat"
+    ).place(
+        x=516.0,
+        y=60.0,
+        width=189.0,
+        height=90.0
+    )
+def load_add_button(frame):
+    frame.add_photo = tk.PhotoImage(file = r"assets\frame1\button_3.png")
+    add_button = tk.Button(
+        frame,
+        image = frame.add_photo,
+        borderwidth=0,
+        highlightthickness=0,
+        cursor="hand2",
+        command=lambda: add_fuction(),
+        relief="flat"
+    ).place(
+        x=735.0,
+        y=60.0,
+        width=189.0,
+        height=90.0
+    )
 def alert_widget():
         alert_message = tk.Toplevel(
             frame0,
@@ -112,7 +145,6 @@ def choose_deck_function():
     table_name = dm.get_table_names()
     for i in table_name:
         name_listbox.insert(tk.END, i[0])
-
 def add_fuction():
     popup = tk.Toplevel(
             frame0,
@@ -230,43 +262,15 @@ def add_fuction():
             dm.add_flashcard(table_name,font_input,back_input)
             font_entry.delete("1.0", tk.END)
             back_entry.delete("1.0",tk.END)
+    popup.protocol("WM_DELETE_WINDOW", reset_stingsVar(get_deck_name))
 
 def load_frame1(before_frame):
     clear_widget(before_frame)
     frame1.tkraise()
     frame1.pack_propagate(False)
-    # Store deck_photo as an attribute of frame1 because the gabage collector always clean data.
-    frame1.deck_photo = tk.PhotoImage(file = r"assets\frame1\button_2.png")
-    deck_button = tk.Button(
-        frame1,
-        image = frame1.deck_photo,
-        borderwidth=0,
-        highlightthickness=0,
-        cursor="hand2",
-        command=lambda: load_frame0(frame1),
-        relief="flat"
-    ).place(
-        x=516.0,
-        y=60.0,
-        width=189.0,
-        height=90.0
-    )
-
-    frame1.add_photo = tk.PhotoImage(file = r"assets\frame1\button_3.png")
-    add_button = tk.Button(
-        frame1,
-        image = frame1.add_photo,
-        borderwidth=0,
-        highlightthickness=0,
-        cursor="hand2",
-        command=lambda: add_fuction(),
-        relief="flat"
-    ).place(
-        x=735.0,
-        y=60.0,
-        width=189.0,
-        height=90.0
-    )
+    
+    load_deck_button(frame1)
+    load_add_button(frame1)
 
     frame1.agian_photo = tk.PhotoImage(file=r"assets\frame1\button_5.png")
     agian_button = tk.Button(
@@ -379,37 +383,8 @@ def load_frame0(before_frame):
     frame0.tkraise()
     frame0.pack_propagate(False)
     # Store deck_photo as an attribute of frame1 because the gabage collector always clean data.
-    frame0.deck_photo = tk.PhotoImage(file = r"assets\frame0\button_1.png")
-    deck_button = tk.Button(
-        frame0,
-        image = frame0.deck_photo,
-        borderwidth=0,
-        highlightthickness=0,
-        cursor="hand2",
-        command=lambda: load_frame0(frame0),
-        relief="flat"
-    ).place(
-        x=516.0,
-        y=60.0,
-        width=189.0,
-        height=90.0
-    )
-
-    frame0.add_photo = tk.PhotoImage(file = r"assets\frame0\button_2.png")
-    add_button = tk.Button(
-        frame0,
-        image = frame0.add_photo,
-        borderwidth=0,
-        highlightthickness=0,
-        cursor="hand2",
-        command=lambda: add_fuction(),
-        relief="flat"
-    ).place(
-        x=735.0,
-        y=60.0,
-        width=189.0,
-        height=90.0
-    )
+    load_deck_button(frame0)
+    load_add_button(frame0)
 
     frame0.deck_list_photo = tk.PhotoImage(file=r"assets\frame0\image_1.png")
     tk.Label(frame0, image=frame0.deck_list_photo ,bg = bg_color).place(
