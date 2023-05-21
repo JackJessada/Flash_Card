@@ -377,7 +377,39 @@ def load_frame1(before_frame):
         width=630.0,
         height=630.0,
     )
-
+    
+    frame1.delete_button_photo = tk.PhotoImage(file=r"assets\frame1\deletebutton.png")
+    delete_button = tk.Button(
+        frame1,
+        image = frame1.delete_button_photo,
+        borderwidth=0,
+        highlightthickness=0,
+        cursor="hand2",
+        command=lambda: print("button_6 clicked"),
+        relief="flat",
+        bg = bg_color
+    ).place(
+        x=27.0,
+        y=957.0,
+        width=126.0,
+        height=43.0
+    )
+    frame1.edit_button_photo = tk.PhotoImage(file=r"assets\frame1\editbutton.png")
+    edit_button = tk.Button(
+        frame1,
+        image = frame1.edit_button_photo,
+        borderwidth=0,
+        highlightthickness=0,
+        cursor="hand2",
+        command=lambda: print("edit clicked"),
+        relief="flat",
+        bg = bg_color
+    ).place(
+        x=1273.0,
+        y=957.0,
+        width=126.0,
+        height=43.0
+    )
 def load_frame0(before_frame):
     clear_widget(before_frame)
     frame0.tkraise()
@@ -388,10 +420,10 @@ def load_frame0(before_frame):
 
     frame0.deck_list_photo = tk.PhotoImage(file=r"assets\frame0\image_1.png")
     tk.Label(frame0, image=frame0.deck_list_photo ,bg = bg_color).place(
-        x=405.0,
-        y=236.0,
-        width=630.0,
-        height=702.0,
+        x=334.0,
+        y=231.0,
+        width=770.0,
+        height=704.0,
     )
     tk.Label(
         frame0,
@@ -587,8 +619,44 @@ def load_frame0(before_frame):
         activeforeground = "#CCD5AE",
         activebackground = "#CCD5AE"
     ).place(
-        x=531.0,
-        y=868.0,
+        x=530.0,
+        y=861.0,
+        width=126.0,
+        height=43.0
+    )
+    frame0.delete_photo = tk.PhotoImage(file = r"assets\frame0\delete.png")
+    delete_button = tk.Button(
+        frame0,
+        image = frame0.delete_photo,
+        borderwidth=0,
+        highlightthickness=0,
+        cursor="hand2",
+        bg = "#CCD5AE",
+        command=lambda: print("delete_button"),
+        relief="flat",
+        activeforeground = "#CCD5AE",
+        activebackground = "#CCD5AE"
+    ).place(
+        x=404.0,
+        y=861.0,
+        width=126.0,
+        height=43.0
+    )
+    frame0.create_photo = tk.PhotoImage(file = r"assets\frame0\button_7.png")
+    create_button = tk.Button(
+        frame0,
+        image = frame0.create_photo,
+        borderwidth=0,
+        highlightthickness=0,
+        cursor="hand2",
+        bg = "#CCD5AE",
+        command=lambda: print("create"),
+        relief="flat",
+        activeforeground = "#CCD5AE",
+        activebackground = "#CCD5AE"
+    ).place(
+        x=908.0,
+        y=861.0,
         width=126.0,
         height=43.0
     )
@@ -605,8 +673,8 @@ def load_frame0(before_frame):
         activeforeground = "#CCD5AE",
         activebackground = "#CCD5AE"
     ).place(
-        x=657.0,
-        y=868.0,
+        x=656.0,
+        y=861.0,
         width=126.0,
         height=43.0
     )
@@ -623,8 +691,8 @@ def load_frame0(before_frame):
         activeforeground = "#CCD5AE",
         activebackground = "#CCD5AE"        
     ).place(
-        x=783.0,
-        y=868.0,
+        x=782.0,
+        y=861.0,
         width=126.0,
         height=43.0
     )
@@ -634,5 +702,5 @@ for frame in (frame0,frame1):
 
 
 
-load_frame1(frame0)
+load_frame0(frame0)
 root.mainloop()

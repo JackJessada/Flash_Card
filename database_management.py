@@ -94,3 +94,24 @@ def delete_flashcard(deck_name, flashcard_id):
     c.execute(f'''DELETE FROM {deck_name} WHERE id=?''', (flashcard_id,))
     conn.commit()
     conn.close()
+
+# Function to query all rows and columns from a table
+def query_all_rows(deck_name):
+    conn = sqlite3.connect("flashcards.db")
+    c = conn.cursor()
+    c.execute(f'''SELECT * FROM {deck_name}''')
+    rows = c.fetchall()
+    conn.close()
+
+    return rows
+
+# # Example usage
+# root = tk.Tk()
+# text_box = tk.Text(root)
+# text_box.pack()
+# results = query_all_rows("css121")
+# text = ""
+# for row in results:
+#     text+=row[1]
+# text_box.insert(tk.END, text)
+# root.mainloop()
