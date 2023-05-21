@@ -87,3 +87,10 @@ def delete_flashcard_table(deck_name):
     conn.commit()
     conn.close()
 
+# Function to delete a flashcard from a deck
+def delete_flashcard(deck_name, flashcard_id):
+    conn = sqlite3.connect("flashcards.db")
+    c = conn.cursor()
+    c.execute(f'''DELETE FROM {deck_name} WHERE id=?''', (flashcard_id,))
+    conn.commit()
+    conn.close()

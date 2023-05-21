@@ -16,15 +16,102 @@ pyglet.font.add_file(r"fonts\Lekton-Bold.ttf")
 pyglet.font.add_file(r"fonts\Lekton-Italic.ttf")
 pyglet.font.add_file(r"fonts\Lekton-Regular.ttf")
 
-
-pyglet.font.load()
 #frame
 frame0 = tk.Frame(root,width=1440,height=1024,bg=bg_color)
 frame1 = tk.Frame(root,width=1440,height=1024,bg=bg_color)
+get_deck_name = tk.StringVar()
 
 def clear_widget(frame):
     for widget in frame.winfo_children():
         widget.destroy()
+def alert_widget():
+        alert_message = tk.Toplevel(
+            frame0,
+            bg = "#D4A373",
+            height = 90,
+            width=510,
+            relief = "ridge"
+        )
+        tk.Label(
+            alert_message,
+            text = "Please select Deck",
+            font = ("Lekton-Bold",40),
+            anchor="nw",
+            bg = "#D4A373",
+            fg = "#7A5E43",
+        ).place(
+            x=20,
+            y=20,
+        )
+def choose_deck_function():
+    popup = tk.Toplevel(
+            frame0,
+            bg = bg_color,
+            height = 774,
+            width=699,
+            relief = "ridge"
+            )
+    popup.title("choose deck")
+    popup.resizable(False, False)
+    
+    frame0.deck_list_popup_photo = tk.PhotoImage(file = r"assets\frame0\deck_list.png")
+    tk.Label(
+        popup,
+        bd = 0,
+        relief="flat",
+        image=frame0.deck_list_popup_photo,
+        activeforeground = bg_color,
+        activebackground = bg_color,
+        background=bg_color,
+    ).place(
+        x = 35,
+        y = 36
+    )
+    def return_selected():
+        selected_items = name_listbox.curselection()
+        for index in selected_items:
+            item = name_listbox.get(index)
+            get_deck_name.set(str(item))
+            popup.destroy()
+    frame0.select_button_popup_photo = tk.PhotoImage(file = r"assets\frame0\select.png")
+    tk.Button(
+        popup,
+        command=lambda :return_selected(),
+        image=frame0.select_button_popup_photo,
+        borderwidth=0,
+        highlightthickness=0,
+        cursor="hand2",
+        relief="flat",
+        background="#CCD5AE",
+        activeforeground = "#CCD5AE",
+        activebackground = "#CCD5AE",
+        ).place(
+            x=287.0,
+            y=671.0,
+            width=126.0,
+            height=43.0)
+    name_listbox = tk.Listbox(
+        popup,
+        bg="#CCD5AE",
+        cursor="hand2",
+        font=("Lekton-Bold",32 * -1,),
+        fg = "#737B58",
+        bd = 0,
+        highlightthickness = 0,
+        selectbackground = "#CCD5AE",
+        selectborderwidth=0,
+        activestyle="none",
+        selectmode=tk.SINGLE
+    )
+    name_listbox.place(
+        x=58,
+        y=193,
+        width=584,
+        height=444,
+    )
+    table_name = dm.get_table_names()
+    for i in table_name:
+        name_listbox.insert(tk.END, i[0])
 
 def add_fuction():
     popup = tk.Toplevel(
@@ -66,7 +153,7 @@ def add_fuction():
     frame0.choose_deck_popup_photo = tk.PhotoImage(file = r"assets\frame0\choose_deck.png")
     choose_deck_button = tk.Button(
         popup,
-        command=lambda :print("chose deck button"),#get_input(),
+        command=lambda :choose_deck_function(),
         image=frame0.choose_deck_popup_photo,
         borderwidth=0,
         highlightthickness=0,
@@ -75,7 +162,8 @@ def add_fuction():
         background=bg_color,
         activeforeground = bg_color,
         activebackground = bg_color,
-        ).place(
+        )
+    choose_deck_button.place(
             x=385.0,
             y=47.0,
             width=297.0,
@@ -116,7 +204,7 @@ def add_fuction():
     frame0.small_add_button_photo = tk.PhotoImage(file = r"assets\frame0\small_add.png")
     submit_button = tk.Button(
         popup,
-        command=lambda : print("eiei"),#get_input(),
+        command=lambda : get_input(),
         image=frame0.small_add_button_photo,
         borderwidth=0,
         highlightthickness=0,
@@ -131,17 +219,17 @@ def add_fuction():
             y=680.0,
             width=116.0,
             height=55.0
-        )
-    # selected_items = name_listbox.curselection()
-    # for index in selected_items:
-    #     item = name_listbox.get(index)
-    #     split1 = item.split()
-    #     old_name = split1[0]
-    # def get_input():
-    #     font_input = font_entry.get()
-    #     back_input = back_entry.get()
-    #     print(font_input)
-    #     print(back_input)
+        ) 
+    def get_input():
+        if get_deck_name.get()=="":
+            alert_widget()
+        else:
+            table_name = get_deck_name.get()
+            font_input = font_entry.get("1.0", tk.END).strip()
+            back_input = back_entry.get("1.0", tk.END).strip()
+            dm.add_flashcard(table_name,font_input,back_input)
+            font_entry.delete("1.0", tk.END)
+            back_entry.delete("1.0",tk.END)
 
 def load_frame1(before_frame):
     clear_widget(before_frame)
@@ -393,11 +481,9 @@ def load_frame0(before_frame):
         font=("Lekton-Bold",32 * -1,),
         fg = "#737B58",
         bd = 0,
-        #highlightcolor = "#CCD5AE",
         highlightthickness = 0,
         selectbackground = "#CCD5AE",
         selectborderwidth=0,
-        #selectforeground="#737B58",
         activestyle="none",
         selectmode=tk.SINGLE
     )
@@ -501,11 +587,15 @@ def load_frame0(before_frame):
         def get_input():
             user_input = entry.get()
             converted_input = user_input.replace(" ", "_")
-            if converted_input[0].isdigit():
-                dm.rename_table(old_name,"start_with_chr")
-            else:
-                dm.rename_table(old_name,converted_input[:18])
-            load_frame0(frame0)
+            
+            try:
+                if converted_input[0].isdigit():
+                    dm.rename_table(old_name,"start_with_chr")
+                else:
+                    dm.rename_table(old_name,converted_input[:18])
+                    load_frame0(frame0)
+            except Exception as e:
+                alert_widget()
             popup.destroy()  # Close the pop-up window
         
         
@@ -568,6 +658,6 @@ for frame in (frame0,frame1):
     frame.grid(row=0,column=0,sticky="nesw")
 
 
-load_frame0(frame1)
 
+load_frame1(frame0)
 root.mainloop()
