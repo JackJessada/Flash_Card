@@ -2,6 +2,8 @@ import tkinter as tk
 import pyglet
 import sqlite3
 import database_management as dm
+import heapq
+from math import ceil
 #base 
 root = tk.Tk()
 root.title("Flash Card")
@@ -20,8 +22,14 @@ pyglet.font.add_file(r"fonts\Lekton-Regular.ttf")
 frame0 = tk.Frame(root,width=1440,height=1024,bg=bg_color)
 frame1 = tk.Frame(root,width=1440,height=1024,bg=bg_color)
 get_deck_name = tk.StringVar()
-def reset_stingsVar(stringvar):
-    stringvar.set("")
+weight = tk.StringVar()
+id = tk.StringVar()
+font = tk.StringVar()
+back = tk.StringVar()
+font_type = tk.StringVar()
+back_type = tk.StringVar()
+all_card = tk.StringVar()
+deck_name1 = tk.StringVar()    
 def clear_widget(frame):
     for widget in frame.winfo_children():
         widget.destroy()
@@ -68,6 +76,44 @@ def alert_widget():
         tk.Label(
             alert_message,
             text = "Please select Deck",
+            font = ("Lekton-Bold",40),
+            anchor="nw",
+            bg = "#D4A373",
+            fg = "#7A5E43",
+        ).place(
+            x=20,
+            y=20,
+        )
+def digit_alert_widget():
+        alert_message = tk.Toplevel(
+            frame0,
+            bg = "#D4A373",
+            height = 90,
+            width=760,
+            relief = "ridge"
+        )
+        tk.Label(
+            alert_message,
+            text = "Please start with a-z or A-Z",
+            font = ("Lekton-Bold",40),
+            anchor="nw",
+            bg = "#D4A373",
+            fg = "#7A5E43",
+        ).place(
+            x=20,
+            y=20,
+        )
+def reset_alert_widget():
+        alert_message = tk.Toplevel(
+            frame0,
+            bg = "#D4A373",
+            height = 90,
+            width=650,
+            relief = "ridge"
+        )
+        tk.Label(
+            alert_message,
+            text = "Please reset the Deck",
             font = ("Lekton-Bold",40),
             anchor="nw",
             bg = "#D4A373",
@@ -262,9 +308,9 @@ def add_fuction():
             dm.add_flashcard(table_name,font_input,back_input)
             font_entry.delete("1.0", tk.END)
             back_entry.delete("1.0",tk.END)
-    popup.protocol("WM_DELETE_WINDOW", reset_stingsVar(get_deck_name))
+    popup.protocol("WM_DELETE_WINDOW", get_deck_name.set(""))
 
-def load_frame1(before_frame):
+def load_frame1(before_frame,heap):
     clear_widget(before_frame)
     frame1.tkraise()
     frame1.pack_propagate(False)
@@ -279,7 +325,7 @@ def load_frame1(before_frame):
         borderwidth=0,
         highlightthickness=0,
         cursor="hand2",
-        command=lambda: print("again_button_has_click"),
+        command=lambda: calculator_click(weight.get(),0.05),
         relief="flat"
     ).place(
         x=405.0,
@@ -295,7 +341,7 @@ def load_frame1(before_frame):
         borderwidth=0,
         highlightthickness=0,
         cursor="hand2",
-        command=lambda: print("hard_button_has_click"),
+        command=lambda: calculator_click(weight.get(),0.25),
         relief="flat"
     ).place(
         x=531.0,
@@ -311,7 +357,7 @@ def load_frame1(before_frame):
         borderwidth=0,
         highlightthickness=0,
         cursor="hand2",
-        command=lambda: print("medium_button_has_click"),
+        command=lambda: calculator_click(weight.get(),0.5),
         relief="flat"
     ).place(
         x=657.0,
@@ -327,7 +373,7 @@ def load_frame1(before_frame):
         borderwidth=0,
         highlightthickness=0,
         cursor="hand2",
-        command=lambda: print("easy_button_has_click"),
+        command=lambda: calculator_click(weight.get(),0.75),
         relief="flat"
     ).place(
         x=783.0,
@@ -343,7 +389,7 @@ def load_frame1(before_frame):
         borderwidth=0,
         highlightthickness=0,
         cursor="hand2",
-        command=lambda: print("remember_button_has_click"),
+        command=lambda: calculator_click(weight.get(),1),
         relief="flat",
         
     ).place(
@@ -360,7 +406,7 @@ def load_frame1(before_frame):
         borderwidth=0,
         highlightthickness=0,
         cursor="hand2",
-        command=lambda: print("reveal_button_has_click"),
+        command=lambda: reveal_it(back.get()),
         relief="flat",
         bg = bg_color
     ).place(
@@ -385,7 +431,7 @@ def load_frame1(before_frame):
         borderwidth=0,
         highlightthickness=0,
         cursor="hand2",
-        command=lambda: print("button_6 clicked"),
+        command=lambda: delete_click(),
         relief="flat",
         bg = bg_color
     ).place(
@@ -401,7 +447,7 @@ def load_frame1(before_frame):
         borderwidth=0,
         highlightthickness=0,
         cursor="hand2",
-        command=lambda: print("edit clicked"),
+        command=lambda: edit_click(),
         relief="flat",
         bg = bg_color
     ).place(
@@ -410,6 +456,135 @@ def load_frame1(before_frame):
         width=126.0,
         height=43.0
     )
+
+    questions_text_box = tk.Text(   frame1,
+                                    bd = 0,
+                                    #cursor = "hand2",
+                                    font = ("Lekton-Bold",32),
+                                    fg = "#737B59",
+                                    relief="flat",
+                                    bg="#CCD5AE",
+                                    wrap="word",
+                                    state="disabled"
+                                 )
+    questions_text_box.place(
+        x=122,
+        y=320,
+        width=535,
+        height=463
+    )
+    reveal_text_box = tk.Text(   frame1,
+                                    bd = 0,
+                                    #cursor = "hand2",
+                                    font = ("Lekton-Bold",32),
+                                    fg = "#7A5E43",
+                                    relief="flat",
+                                    bg="#D4A373",
+                                    wrap="word",
+                                    state="disabled"
+                                 )
+    reveal_text_box.place(
+        x=782,
+        y=320,
+        width=535,
+        height=463
+    )
+    def fetch_data():
+        if heap:
+            cur = heapq.heappop(heap)
+            #print(cur)
+            weight.set(cur[0])
+            id.set(cur[1])
+            font.set(cur[2])
+            back.set(cur[3])
+            font_type.set(cur[4])
+            back_type.set(cur[5])
+        else:
+            weight.set("")
+            id.set("")
+            font.set("")
+            back.set("")
+            font_type.set("")
+            back_type.set("")
+            load_frame0(frame1)
+    fetch_data()
+    
+    def show_questions(data):
+        
+        questions_text_box.config(state="normal")
+        questions_text_box.delete("1.0",tk.END)
+        questions_text_box.insert(tk.END,data)
+        questions_text_box.config(state="disabled")
+        reveal_text_box.config(state="normal")
+        reveal_text_box.delete("1.0",tk.END)
+        reveal_text_box.config(state="disabled")
+    show_questions(font.get())
+
+    def reveal_it(data):
+        reveal_text_box.config(state="normal")
+        reveal_text_box.delete("1.0",tk.END)
+        reveal_text_box.insert(tk.END,data)
+        reveal_text_box.config(state="disabled")
+
+    def edit_click():
+        questions_text_box.config(state="normal")
+        reveal_text_box.config(state="normal")
+        popup = tk.Toplevel(
+            frame1,
+            bg = bg_color,
+            height = 120,
+            width=120,
+            relief = "ridge"
+            )
+        popup.title("confirm button")
+        popup.resizable(False, False)
+        frame1.confirm_button = tk.PhotoImage(file = r"assets\frame0\entry_2.png")
+        comfirm_button = tk.Button(
+            popup,
+            command=lambda :action(),
+            image=frame1.confirm_button,
+            borderwidth=0,
+            highlightthickness=0,
+            cursor="hand2",
+            relief="flat",
+            background=bg_color,
+            activeforeground = bg_color,
+            activebackground = bg_color,
+            ).place(
+                x=12.0,
+                y=12.0,
+                width=96.0,
+                height=96.0
+            )
+        
+        def action():
+            #print(deck_name1.get(),id.get(),questions_text_box.get("1.0", tk.END).strip(),reveal_text_box.get("1.0", tk.END).strip(),font_type.get(),back_type.get(),weight.get())
+            dm.edit_flashcard(deck_name1.get(),id.get(),questions_text_box.get("1.0", tk.END).strip(),reveal_text_box.get("1.0", tk.END).strip(),font_type.get(),back_type.get(),weight.get())
+            heapq.heappush(heap,(int(weight.get()),int(id.get()),questions_text_box.get("1.0", tk.END).strip(),reveal_text_box.get("1.0", tk.END).strip(),font_type.get(),back_type.get()))
+            questions_text_box.config(state="disabled")
+            reveal_text_box.config(state="disabled")
+            popup.destroy()
+            fetch_data()
+            if len(heap) > 0:
+                show_questions(font.get())
+    def Eliminate_excess(data):
+        if data < 0:
+            return True
+        else:
+            return False
+    def calculator_click(weight,percent):
+        new_weight = int(weight)+ceil(int(all_card.get())*percent)
+        if Eliminate_excess(new_weight):
+            heapq.heappush(heap,(new_weight,id.get(),font.get(),back.get(),font_type.get(),back_type.get()))
+        dm.edit_flashcard(deck_name1.get(),id.get(),font.get(),back.get(),font_type.get(),back_type.get(),new_weight)
+        fetch_data()
+        if len(heap) > 0:
+            show_questions(font.get())
+    def delete_click():
+        dm.delete_flashcard(deck_name1.get(),id.get())
+        fetch_data()
+        if len(heap) > 0:
+            show_questions(font.get())
 def load_frame0(before_frame):
     clear_widget(before_frame)
     frame0.tkraise()
@@ -417,7 +592,6 @@ def load_frame0(before_frame):
     # Store deck_photo as an attribute of frame1 because the gabage collector always clean data.
     load_deck_button(frame0)
     load_add_button(frame0)
-
     frame0.deck_list_photo = tk.PhotoImage(file=r"assets\frame0\image_1.png")
     tk.Label(frame0, image=frame0.deck_list_photo ,bg = bg_color).place(
         x=334.0,
@@ -508,14 +682,123 @@ def load_frame0(before_frame):
             word = "{:<19}{:<6}{:<6}{}".format(i[0], total,learn,total-learn)
             name_listbox.insert(tk.END, word)
     update_deck()
-    def reset_click():
+    def delete_click():
         selected_items = name_listbox.curselection()
+        if selected_items == tuple():
+            alert_widget()
         for index in selected_items:
             item = name_listbox.get(index)
             split1 = item.split()
-            len = dm.get_flashcard_count(split1[0])*-2
+            dm.delete_flashcard_table(split1[0])
+            load_frame0(frame0)
+    def reset_click():
+        selected_items = name_listbox.curselection()
+        if selected_items == tuple():
+            alert_widget()
+        for index in selected_items:
+            item = name_listbox.get(index)
+            split1 = item.split()
+            len = dm.get_flashcard_count(split1[0])*-1
             dm.reset_weight(split1[0],len)
             load_frame0(frame0)
+    def start_click():
+        selected_items = name_listbox.curselection()
+        if selected_items == tuple():
+            alert_widget()
+            return
+        for index in selected_items:
+            item = name_listbox.get(index)
+            split1 = item.split()
+            table_name = split1[0]
+            deck_name1.set(table_name)
+        if dm.get_flashcard_count(split1[0])-dm.count_rows_with_weight(split1[0]) == 0:
+            reset_alert_widget()
+            return
+        else:
+            flash_card_zone(dm.query_all_rows(table_name))
+        
+    def create_click():
+        popup = tk.Toplevel(
+            frame0,
+            bg = bg_color,
+            height = 126,
+            width=651,
+            relief = "ridge"
+            )
+        popup.title("Rename")
+        popup.resizable(False, False)
+        # Create an Entry widget in the pop-up window
+        frame0.rename_popup_photo = tk.PhotoImage(file = r"assets\frame0\entry_1.png")
+        tk.Label(
+            popup,
+            bd = 0,
+            relief="flat",
+            image=frame0.rename_popup_photo,
+            activeforeground = bg_color,
+            activebackground = bg_color,
+            background=bg_color,
+        ).place(
+            x = 183.0,
+            y = 15.0
+        )
+        entry = tk.Entry(
+            popup,
+            bd = 0,
+            cursor = "hand2",
+            font = ("Lekton-Bold",32 * -1),
+            fg = "#737B59",
+            relief="flat",
+            bg="#CCD5AE"
+            )
+        entry.place(
+            x=231.0,
+            y=15.0,
+            width=237.0,
+            height=94.0
+            )
+        tk.Label(
+            popup,
+            text="New name:",
+            font = ("Lekton-Bold",32 * -1),
+            fg = "#737B59",
+            relief="flat",
+            activeforeground = bg_color,
+            activebackground = bg_color,
+            background=bg_color,
+        ).place(
+            x = 26,
+            y = 35,
+        )
+        frame0.ok_button_photo = tk.PhotoImage(file = r"assets\frame0\entry_2.png")
+        submit_button = tk.Button(
+            popup,
+            command=lambda :get_input(),
+            image=frame0.ok_button_photo,
+            borderwidth=0,
+            highlightthickness=0,
+            cursor="hand2",
+            relief="flat",
+            background=bg_color,
+            activeforeground = bg_color,
+            activebackground = bg_color,
+            ).place(
+                x=531.0,
+                y=15.0,
+                width=96.0,
+                height=96.0
+            )
+        def get_input():
+            user_input = entry.get()
+            converted_input = user_input.replace(" ", "_")
+            try:
+                if converted_input[0].isdigit():
+                    digit_alert_widget()
+                else:
+                    dm.create_flashcard_table(converted_input[:18])
+                    load_frame0(frame0)
+            except Exception as e:
+                alert_widget()
+            popup.destroy()
     def rename_popup():
         popup = tk.Toplevel(
             frame0,
@@ -597,7 +880,7 @@ def load_frame0(before_frame):
             
             try:
                 if converted_input[0].isdigit():
-                    dm.rename_table(old_name,"start_with_chr")
+                    digit_alert_widget()
                 else:
                     dm.rename_table(old_name,converted_input[:18])
                     load_frame0(frame0)
@@ -632,7 +915,7 @@ def load_frame0(before_frame):
         highlightthickness=0,
         cursor="hand2",
         bg = "#CCD5AE",
-        command=lambda: print("delete_button"),
+        command=lambda: delete_click(),
         relief="flat",
         activeforeground = "#CCD5AE",
         activebackground = "#CCD5AE"
@@ -650,7 +933,7 @@ def load_frame0(before_frame):
         highlightthickness=0,
         cursor="hand2",
         bg = "#CCD5AE",
-        command=lambda: print("create"),
+        command=lambda: create_click(),
         relief="flat",
         activeforeground = "#CCD5AE",
         activebackground = "#CCD5AE"
@@ -668,7 +951,7 @@ def load_frame0(before_frame):
         highlightthickness=0,
         cursor="hand2",
         bg = "#CCD5AE",
-        #command=lambda: button_click(),
+        command=lambda: start_click(),
         relief="flat",
         activeforeground = "#CCD5AE",
         activebackground = "#CCD5AE"
@@ -696,7 +979,19 @@ def load_frame0(before_frame):
         width=126.0,
         height=43.0
     )
-    
+def flash_card_zone(all_row):
+    heap = []
+    for each in all_row:
+        id_1 = each[0]
+        font_1 = each[1]
+        back_1 = each[2]
+        font_type_1 = each[3]
+        back_type_1 = each[4]
+        weight_1 = each[5]
+        if weight_1 < 0:
+            heapq.heappush(heap,(weight_1,id_1,font_1,back_1,font_type_1,back_type_1))
+    all_card.set(dm.get_flashcard_count(deck_name1.get()))
+    load_frame1(frame0,heap)
 for frame in (frame0,frame1):
     frame.grid(row=0,column=0,sticky="nesw")
 

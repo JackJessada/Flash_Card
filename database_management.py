@@ -1,4 +1,3 @@
-import tkinter as tk
 import sqlite3
 #Function to get all deck name in a db
 def get_table_names():
@@ -43,7 +42,7 @@ def count_rows_with_weight(deck_name):
     else:
         return 0
 # Function to reset the weight of flashcards in a specific deck
-def reset_weight(deck_name,weight=-100):
+def reset_weight(deck_name,weight=-10):
     conn = sqlite3.connect("flashcards.db")
     c = conn.cursor()
     c.execute(f'''UPDATE {deck_name} SET weight={weight}''')
@@ -62,7 +61,7 @@ def get_flashcard_count(deck_name):
     else:
         return 0
 # Function to add a flashcard to a specific deck
-def add_flashcard(deck_name, front_card, back_card, front_card_type="text", back_card_type="text", weight=-100):
+def add_flashcard(deck_name, front_card, back_card, front_card_type="text", back_card_type="text", weight=-10):
     conn = sqlite3.connect("flashcards.db")
     c = conn.cursor()
     c.execute(f'''INSERT INTO {deck_name} (front_card, back_card, front_card_type, back_card_type, weight)
@@ -71,11 +70,11 @@ def add_flashcard(deck_name, front_card, back_card, front_card_type="text", back
     conn.close()
 
 # Function to edit a flashcard in a specific deck
-def edit_flashcard(deck_name, flashcard_id, front_card, back_card, front_card_type, back_card_type):
+def edit_flashcard(deck_name, flashcard_id, front_card, back_card, front_card_type, back_card_type,weight):
     conn = sqlite3.connect("flashcards.db")
     c = conn.cursor()
-    c.execute(f'''UPDATE {deck_name} SET front_card=?, back_card=?, front_card_type=?, back_card_type=?
-                WHERE id=?''', (front_card, back_card, front_card_type, back_card_type, flashcard_id))
+    c.execute(f'''UPDATE {deck_name} SET front_card=?, back_card=?, front_card_type=?, back_card_type=?,weight=?
+                WHERE id=?''', (front_card, back_card, front_card_type, back_card_type,weight ,flashcard_id))
     conn.commit()
     conn.close()
 
@@ -105,13 +104,25 @@ def query_all_rows(deck_name):
 
     return rows
 
-# # Example usage
-# root = tk.Tk()
-# text_box = tk.Text(root)
-# text_box.pack()
-# results = query_all_rows("css121")
-# text = ""
-# for row in results:
-#     text+=row[1]
-# text_box.insert(tk.END, text)
-# root.mainloop()
+# Function to create a new flashcard table
+def create_flashcard_table(deck_name):
+    conn = sqlite3.connect("flashcards.db")
+    c = conn.cursor()
+    c.execute(f'''CREATE TABLE IF NOT EXISTS {deck_name} (
+                    id INTEGER PRIMARY KEY,
+                    front_card TEXT,
+                    back_card TEXT,
+                    front_card_type TEXT,
+                    back_card_type TEXT,
+                    weight INTEGER
+                )''')
+    conn.commit()
+    conn.close()
+
+def reset_flash_card_weight(deck_name,weight=-10):
+    conn = sqlite3.connect("flashcards.db")
+    c = conn.cursor()
+    c.execute(f'''UPDATE {deck_name} SET weight={weight}''')
+    
+    conn.commit()
+    conn.close()
