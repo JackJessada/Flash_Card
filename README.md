@@ -1,4 +1,4 @@
-# Set up
+# Set up Have 2 options 
   ### 1.download launch in local 
   - git clone https://github.com/JackJessada/Flash_Card.git
   - pip install -r requirements.txt
