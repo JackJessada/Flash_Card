@@ -3,9 +3,9 @@
   - git clone https://github.com/JackJessada/Flash_Card.git
   - pip install -r requirements.txt
   - download all fonts
-  ### 2.download .exe file
+  ### 2.download .exe file in release
   - download all fonts
-  - execute the flashCard_setup_1.0.exe
+  - execute the [flashCard_setup_1.0.exe](https://github.com/JackJessada/Flash_Card/releases/tag/1.0)
 # Flash Card
   ### Standard Frame
   #### Deck button
