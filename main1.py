@@ -576,13 +576,13 @@ def load_frame1(before_frame,heap):
             return False
     def calculator_click(weight,percent):
         new_weight = int(weight)+ceil(int(all_card.get())*percent)
-        #print(len(heap))
+        print(len(heap))
         if Eliminate_excess(new_weight):
             heapq.heappush(heap,(new_weight,id.get(),font.get(),back.get(),font_type.get(),back_type.get()))
-            #print("am here")
+            print("am here")
         dm.edit_flashcard(deck_name1.get(),id.get(),font.get(),back.get(),font_type.get(),back_type.get(),new_weight)
         fetch_data()
-        #print(len(heap))
+        print(len(heap))
         if len(heap) >= 0:
             show_questions(font.get())
     def delete_click():
