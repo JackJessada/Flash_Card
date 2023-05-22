@@ -510,14 +510,16 @@ def load_frame1(before_frame,heap):
     fetch_data()
     
     def show_questions(data):
-        
-        questions_text_box.config(state="normal")
-        questions_text_box.delete("1.0",tk.END)
-        questions_text_box.insert(tk.END,data)
-        questions_text_box.config(state="disabled")
-        reveal_text_box.config(state="normal")
-        reveal_text_box.delete("1.0",tk.END)
-        reveal_text_box.config(state="disabled")
+        try:
+            questions_text_box.config(state="normal")
+            questions_text_box.delete("1.0",tk.END)
+            questions_text_box.insert(tk.END,data)
+            questions_text_box.config(state="disabled")
+            reveal_text_box.config(state="normal")
+            reveal_text_box.delete("1.0",tk.END)
+            reveal_text_box.config(state="disabled")
+        except:
+            pass
     show_questions(font.get())
 
     def reveal_it(data):
@@ -565,7 +567,7 @@ def load_frame1(before_frame,heap):
             reveal_text_box.config(state="disabled")
             popup.destroy()
             fetch_data()
-            if len(heap) > 0:
+            if len(heap) >= 0:
                 show_questions(font.get())
     def Eliminate_excess(data):
         if data < 0:
@@ -574,16 +576,19 @@ def load_frame1(before_frame,heap):
             return False
     def calculator_click(weight,percent):
         new_weight = int(weight)+ceil(int(all_card.get())*percent)
+        print(len(heap))
         if Eliminate_excess(new_weight):
             heapq.heappush(heap,(new_weight,id.get(),font.get(),back.get(),font_type.get(),back_type.get()))
+            print("am here")
         dm.edit_flashcard(deck_name1.get(),id.get(),font.get(),back.get(),font_type.get(),back_type.get(),new_weight)
         fetch_data()
-        if len(heap) > 0:
+        print(len(heap))
+        if len(heap) >= 0:
             show_questions(font.get())
     def delete_click():
         dm.delete_flashcard(deck_name1.get(),id.get())
         fetch_data()
-        if len(heap) > 0:
+        if len(heap) >=0:
             show_questions(font.get())
 def load_frame0(before_frame):
     clear_widget(before_frame)
